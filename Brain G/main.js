@@ -9,7 +9,7 @@ var ctx;
 var fire = false;
 var counter = 0;
 var SHOT_counter = 0;
-var SHOT_bosscountr = 0;
+var /*SHOT_*/bosscounter = 0;
 var chara;
 var IsCheating = false;
 var Arecheating = false;
@@ -147,7 +147,7 @@ window.onload = function () {
                             if (!charaShot[i].alive) {
                                 switch (Count) {
                                     case 0:
-                                        charaShot[i].set(chara.position, 3, 0, 3,);
+                                        charaShot[i].set(chara.position, 3, 0, 3);
                                         break;
                                     case 1:
                                         charaShot[i].set(chara.position, 3, 1, 3);
@@ -447,27 +447,27 @@ window.onload = function () {
                              boss[i].param++;
                              // ショットを打つかどうかパラメータの値からチェック
                            
-                               if(SHOT_bosscountr % 10 == 0){
+                               if(/*SHOT_*/bosscounter % 2 == 0){
                                   // エネミーショットを調査する
                                   for (j = 0; j < BOSS_SHOT_MAX_COUNT; j++) {
                                      if (!bossShot[j].alive) {
                                           switch (bossCount){
                                               case 0:
-                                                 bossShot[j].set(boss[i].position,{x:1,y:0},10,3);
-                                                break;
+                                                 bossShot[j].set(boss[i].position,{x:1,y:0},8,3);
+                                             break;
                                               case 1:
-                                                bossShot[j].set(boss[i].position,{x:-1,y:0},10,3);                                            
-                                                break;
+                                                bossShot[j].set(boss[i].position,{x:-1,y:0},8,3);                                            
+                                             break;
+                                              }
+                                         bossCount++;
+                                          if(bossCount > 1 ){ bosscount = 0};
+                                          break;
                                            }
-                                        bossCount++;
-                                         if(bossCount >= 2 ){ bosscount = 0};
-                                         break;
-                                       }
                                          
-                                       　 // 1個出現させたのでループを抜ける
-                                    }
+                                       　  // 1個出現させたのでループを抜ける
+                                    } 
                                 }
-                                SHOT_bosscountr++;
+                                /*SHOT_*/bosscounter++;
                             
                              // パスをいったん閉じる
                               ctx.closePath();
