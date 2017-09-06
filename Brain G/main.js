@@ -429,14 +429,14 @@ window.onload = function () {
                     }
                 } // boss を新しく追加
 
-                {
+               
                     ctx.fillStyle = BOSS_COLOR;
                     ctx.beginPath();
                     for (i = 0; i < BOSS_MAX_COUNT; i++) {
                         // エネミーの生存フラグをチェック
                         if (boss[i].alive) {
                             // エネミーを動かす
-                            boss[i].move();
+                           /* boss[i].move();*/
                             // エネミーを描くパスを設定
                             ctx.arc(
                                 boss[i].position.x,
@@ -444,25 +444,25 @@ window.onload = function () {
                                 boss[i].size,
                                 0, Math.PI * 2, false
                              );
-                             boss[i].param++;
-                             // ショットを打つかどうかパラメータの値からチェック
-                           
-                               if(/*SHOT_*/bosscounter % 2 == 0){
+                             /*boss[i].param++;*/
+                             // ショットを打つかどうかパラメータの値からチェック                               
+                               if(/*SHOT_*/bosscounter % 50 == 0){
                                   // エネミーショットを調査する
                                   for (j = 0; j < BOSS_SHOT_MAX_COUNT; j++) {
                                      if (!bossShot[j].alive) {
-                                          switch (bossCount){
-                                              case 0:
-                                                 bossShot[j].set(boss[i].position,{x:1,y:0},8,3);
-                                             break;
-                                              case 1:
-                                                bossShot[j].set(boss[i].position,{x:-1,y:0},8,3);                                            
-                                             break;
-                                              }
-                                         bossCount++;
-                                          if(bossCount > 1 ){ bosscount = 0};
-                                          break;
-                                           }
+                                         if (boss[i].type == 0) {
+                                            // エネミーショットを新規にセットする
+                                            a = boss[i].position.distance(chara.position);
+                                            a.normalize();                                             
+                                            bossShot[j].set(boss[i].position, { x:  1.5, y:   0 }, 5, 3);  
+                                            bossShot[j].set(boss[i].position, { x: -1.5, y:   0 }, 5, 3);  
+                                            bossShot[j].set(boss[i].position, { x:    0, y: 1.5 }, 5, 3); 
+                                            bossShot[j].set(boss[i].position, a, 5, 3);                                          
+                                         } /*else {
+                                             bossShot[j].set(boss[i].position, p, 5, 3);                                            
+                                        }*/
+                                        break;  
+                                        }
                                          
                                        　  // 1個出現させたのでループを抜ける
                                     } 
@@ -474,7 +474,7 @@ window.onload = function () {
                          }
                      }
                       ctx.fill();
-                 } // Boss の移動,球の発射,敵の表示
+                  // Boss の移動,球の発射,敵の表示
 
 
                     ctx.fillStyle = BOSS_SHOT_COLOR;
