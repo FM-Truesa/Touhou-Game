@@ -24,9 +24,10 @@ var BOSS_HP = 100;
 var point = 0;
 var life = 5;
 var invincible = false;
+
 // - const --------------------------------------------------------------------
 var CHARA_COLOR = 'rgba(255, 160, 180, 0.8)';
-var CHARA_SHOT_COLOR = 'rgba(200, 50, 0, 1)';
+var CHARA_SHOT_COLOR = 'rgba(255,255,255, 1)';
 var CHARA_SHOT_MAX_COUNT = 1000;
 var ENEMY_COLOR = 'rgba(10, 100, 230, 0.6)';
 var ENEMY_MAX_COUNT = 100;
@@ -93,7 +94,7 @@ window.onload = function () {
           chara.position.y = mouse.y;
         } else {
           var speed = 5;
-          if (IsSlow) speed = 3;
+          if (IsSlow) speed = 5;
           if (Key === 39) {
             chara.position.x += speed;
           }
@@ -126,16 +127,24 @@ window.onload = function () {
 
         // JIKI描画
         if (point < -Infinity) {
-          chara.size = 8;
+          chara.size = 10;
         }
         if (point > -Infinity) {
-          chara.size = 7;
+          chara.size = 10;
         };
 
+        //中心自機
         ChangeColor();
         ctx.beginPath();
-        ctx.arc(chara.position.x, chara.position.y, chara.size, 0, Math.PI * 2, false);
+        ctx.arc(chara.position.x, chara.position.y, chara.size, 0, Math.PI * 2, false);         
         ctx.fillStyle = CHARA_COLOR;
+        ctx.fill();
+
+        //左右自機
+        ctx.beginPath();           
+        ctx.arc(chara.position.x + 30, chara.position.y + 10, chara.size / 2, 0, Math.PI * 2, false);
+        ctx.arc(chara.position.x -30, chara.position.y + 10, chara.size/2, 0, Math.PI * 2, false);
+          ctx.fillStyle = 'rgba(220,20,60,1)';
         ctx.fill();
 
         // JIKIのチート玉
@@ -147,10 +156,10 @@ window.onload = function () {
               if (!charaShot[i].alive) {
                 switch (Count) {
                   case 0:
-                    charaShot[i].set(chara.position, 3, 0, 3);
+                    charaShot[i].set(chara.position, 4, 0, 3);
                     break;
                   case 1:
-                    charaShot[i].set(chara.position, 3, 1, 3);
+                    charaShot[i].set(chara.position, chara.size/4, 1, 3);
                     break;
                   case 2:
                     charaShot[i].set(chara.position, 3, -1, 3);
@@ -218,12 +227,17 @@ window.onload = function () {
                   case 23:
                     if (Arecheating) charaShot[i].set(chara.position, 3, -9, -2);
                     break;
+                    case 24:
+                    charaShot[i].set(chara.position, 3, 1, 3);
+                    break;
+                  case 25:
+                    charaShot[i].set(chara.position, 3, -1, 3);
 
                   default:
                     break;
                 }
                 Count++;
-                if (Count > 23) break;
+                if (Count > 25) break;
               }
             }
 
@@ -432,12 +446,12 @@ window.onload = function () {
           }
         } // boss を新しく追加
 
-
-        ctx.fillStyle = BOSS_COLOR;
-        ctx.beginPath();
-        for (i = 0; i < BOSS_MAX_COUNT; i++) {
+        
+         ctx.fillStyle = BOSS_COLOR;
+         ctx.beginPath();
+         for (i = 0; i < BOSS_MAX_COUNT; i++) {
           // エネミーの生存フラグをチェック
-          if (boss[i].alive) {
+           if (boss[i].alive) {
             // エネミーを動かす
             /* boss[i].move();*/
             // エネミーを描くパスを設定
@@ -449,12 +463,14 @@ window.onload = function () {
             );
             /*boss[i].param++;*/
             // ショットを打つかどうかパラメータの値からチェック                               
-            if ( /*SHOT_*/ bosscounter % 50 == 0) {
+              if ( /*SHOT_*/ bosscounter % 50 == 0) {
               a = boss[i].position.distance(chara.position);
               a.normalize();
               let Vectors = [{
                 x: 1.5,
-                y: 0
+                y: 0,
+                size:5,
+                speed:2.5
               }, {
                 x: -1.5,
                 y: 0
@@ -476,8 +492,12 @@ window.onload = function () {
               },{
                 x: -1.08,
                 y: -1.08
-              },
-               /*a*/];
+              },              
+               /* a,
+                size : 10,
+                speed : 10*/];
+                            
+                
               let vectorCounter = 0;
               // エネミーショットを調査する
               for (j = 0; j < BOSS_SHOT_MAX_COUNT; j++) {
@@ -485,25 +505,26 @@ window.onload = function () {
                   if (boss[i].type == 0) {
                     // エネミーショットを新規にセットする
 
-                    bossShot[j].set(boss[i].position, Vectors[vectorCounter], 5, 2.5);
+                    bossShot[j].set(boss[i].position, Vectors[vectorCounter], Vectors[vectorCounter].size || 5, Vectors[vectorCounter].speed|| 2.5);
                     vectorCounter++;
                     if (vectorCounter >= Vectors.length) break;
                   }
-                }
+                 }
 
-                　 // 1個出現させたのでループを抜ける
+                　  // 1個出現させたのでループを抜ける
+               }
               }
-            }
-            /*SHOT_*/
-            bosscounter++;
+             /*SHOT_*/
+             bosscounter++;
 
-            // パスをいったん閉じる
-            ctx.closePath();
-          }
-        }
-        ctx.fill();
-        // Boss の移動,球の発射,敵の表示
-
+             // パスをいったん閉じる
+             ctx.closePath();
+            
+                     }
+         ctx.fill();
+         // Boss の移動,球の発射,敵の表示
+         
+       }
 
         ctx.fillStyle = BOSS_SHOT_COLOR;
         ctx.beginPath();
@@ -606,6 +627,7 @@ function keyDown(event) {
   }
   if (event.ctrlKey)
     IsSlow = true;
+
   else
     IsSlow = false;
   if (event.shiftKey && event.ctrlKey) {
@@ -646,12 +668,15 @@ function keyUp(event) {
 
 function ChangeColor() {
   if (invincible) {
-    CHARA_COLOR = 'rgba(255, 160, 180, 0.5)';
+    CHARA_COLOR = 'rgba(50, 255, 50, 0.5)';
   } else if (Wascheating) {
     CHARA_COLOR = 'rgba(50, 255, 50, 0.5)';
-  } else CHARA_COLOR = 'rgba(255, 160, 180, 0.8)';
+  } else CHARA_COLOR = 'rgba(0,0,0,0.8)';
   if (BOSS_MAX_COUNT == 1) {
-    BOSS_COLOR = 'rgba(255,255,0,1)', BOSS_SHOT_COLOR = 'rgba(35, 71, 148,0.8)'
+    BOSS_COLOR = 'rgba(255,255,0,1)', BOSS_SHOT_COLOR = 'rgba(35, 71, 148,0.8)';
+  }
+  if(IsSlow){
+    CHARA_COLOR = 'rgba(50,50,50, 0.8)';
   }
 }
 
